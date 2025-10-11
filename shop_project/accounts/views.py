@@ -5,6 +5,8 @@ from django.urls import reverse_lazy
 from django.shortcuts import redirect
 from .forms import UserRegisterForm, ProfileForm
 from .models import Profile
+from django.contrib.auth import logout
+
 
 class RegisterView(CreateView):
     model = User
@@ -21,11 +23,11 @@ class RegisterView(CreateView):
 
 
 class UserLoginView(LoginView):
-    template_name = 'accounts/login.html'
-
+    template_name = 'accounts/login.html' 
 
 class UserLogoutView(LogoutView):
-    next_page = reverse_lazy('login')
+    next_page = reverse_lazy('store:home') 
+
 
 
 class ProfileDetailView(DetailView):

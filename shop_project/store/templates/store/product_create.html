@@ -5,7 +5,7 @@
   <h2>Add product</h2>
   <div class="card">
     <div class="card-body">
-      <form method="post" novalidate>
+      <form method="post" enctype="multipart/form-data" novalidate>
         {% csrf_token %}
         {% for field in form %}
           <div class="mb-3">

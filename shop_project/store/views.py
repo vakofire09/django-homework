@@ -7,10 +7,7 @@ from .models import Category, Product
 from .forms import ProductForm
 
 
-class home(ListView):
-    model = Category
-    template_name = "store/home.html"
-    context_object_name = "categories"
+
 
 
 class cegoryDetailView(DetailView):
@@ -58,3 +55,29 @@ class productDeleteView(DeleteView):
     template_name = "store/delete_product.html"
     context_object_name = "product"
     success_url = reverse_lazy("home")
+
+
+class home(ListView):
+    model = Product
+    template_name = "store/home.html"
+    context_object_name = "products"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        query = self.request.GET.get("q")
+        min_price = self.request.GET.get("min_price")
+        max_price = self.request.GET.get("max_price")
+
+        if query:
+            queryset = queryset.filter(name__icontains=query)
+        if min_price:
+            queryset = queryset.filter(price__gte=min_price)
+        if max_price:
+            queryset = queryset.filter(price__lte=max_price)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["categories"] = Category.objects.all()
+        return context

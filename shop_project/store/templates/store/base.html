@@ -27,14 +27,14 @@
   {% if user.is_authenticated %}
       <li class="nav-item"><a class="nav-link" href="{% url 'profile' %}">Profile</a></li>
       <li class="nav-item"><a class="nav-link" href="{% url 'profile_edit' %}">Edit Profile</a></li>
-      <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
-  {% else %}
-      <li class="nav-item">
+            <li class="nav-item">
         <form action="{%url 'user:logout' %}" method="post">
           {% csrf_token %}
           <button type="submit" class="btn btn-link nav-link">Logout</button>
         </form>
       </li>
+  {% else %}
+      <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
       <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
   {% endif %}
 </ul>

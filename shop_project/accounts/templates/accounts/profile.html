@@ -6,7 +6,7 @@
   <p>Phone: {{ user.profile.phone }}</p>
   <p>Address: {{ user.profile.address }}</p>
   <p>Birth date: {{ user.profile.birth_date }}</p>
-  <a href="{% url 'profile_edit' %}" class="btn btn-warning">Edit Profile</a>
-  <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+  <a href="{% url 'accounts:profile_edit' %}" class="btn btn-warning">Edit Profile</a>
+  <a href="{% url 'accounts:logout' %}" class="btn btn-danger">Logout</a>
 </div>
 {% endblock %}

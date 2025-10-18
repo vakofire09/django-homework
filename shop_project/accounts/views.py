@@ -6,6 +6,8 @@ from django.shortcuts import redirect
 from .forms import UserRegisterForm, ProfileForm
 from .models import Profile
 from django.contrib.auth import logout
+from django.core.mail import send_mail
+from django.contrib.auth.tokens import default_token_generator
 
 
 class RegisterView(CreateView):
@@ -47,3 +49,4 @@ class ProfileUpdateView(UpdateView):
 
     def get_object(self, queryset=None):
         return self.request.user.profile
+

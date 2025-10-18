@@ -38,9 +38,10 @@
   {% endif %}
 </ul>
 
-          <form class="d-flex" role="search" method="get" action="">
-            <input class="form-control me-2" type="search" placeholder="Search (not implemented)" aria-label="Search" disabled>
-          </form>
+          <form class="d-flex" role="search" method="get" action="{% url 'home' %}">
+  <input class="form-control me-2" type="search" name="q" placeholder="Search products...">
+  <button class="btn btn-outline-light" type="submit">Search</button>
+</form>
         </div>
       </div>
     </nav>

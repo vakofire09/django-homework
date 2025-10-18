@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import RegisterView, UserLoginView, UserLogoutView, ProfileDetailView, ProfileUpdateView
+from django.urls import include
 
 
 app_name = 'accounts'

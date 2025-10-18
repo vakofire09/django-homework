@@ -1,5 +1,6 @@
 from django import forms
 from .models import Product
+from .models import ProductRating
 
 class ProductForm(forms.ModelForm):
     class Meta:
@@ -15,3 +16,11 @@ class ProductForm(forms.ModelForm):
             'in_stock': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
+
+class ProductRatingForm(forms.ModelForm):
+    class Meta:
+        model = ProductRating
+        fields = ['rating']
+        widgets = {
+            'rating': forms.NumberInput(attrs={'min': 1, 'max': 5, 'required': True})
+        }

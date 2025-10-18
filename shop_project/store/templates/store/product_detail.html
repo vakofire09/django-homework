@@ -8,6 +8,47 @@
       <h6 class="card-subtitle mb-2 text-muted">Category: <a href="{% url 'category_detail' product.category.pk %}">{{ product.category.name }}</a></h6>
       <p class="card-text">{{ product.description|default:"No description provided." }}</p>
       <p class="h5">${{ product.price }}</p>
+      
+ <p>Average Rating:</p>
+<div>
+  {% with rating=product.rating|floatformat:0 %}
+    {% for i in "12345" %}
+      {% if i|stringformat:"i" <= rating %}
+        <span class="text-warning">&#9733;</span>
+      {% else %}
+        <span class="text-secondary">&#9733;</span>
+      {% endif %}
+    {% endfor %}
+  {% endwith %}
+  ({{ product.rating|floatformat:1 }} / 5)
+</div>
+
+{% if user.is_authenticated %}
+  <h4>Rate this product</h4>
+  <form method="post" action="{% url 'rate_product' product.id %}">
+    {% csrf_token %}
+    <div class="btn-group mb-3" role="group">
+      {% for i in "12345" %}
+        <input type="radio" class="btn-check" name="rating" id="rating{{ i }}" value="{{ i }}"
+               {% if user_rating and user_rating.rating|stringformat:"i" == i %}checked{% endif %}>
+        <label class="btn btn-outline-warning" for="rating{{ i }}">&#9733;</label>
+      {% endfor %}
+      {% if messages %}
+  <div class="container mt-3">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+    </div>
+    <button type="submit" class="btn btn-primary">Submit Rating</button>
+  </form>
+{% else %}
+  <p><a href="{% url 'login' %}">Login</a> to rate this product</p>
+{% endif %}
 
       {% if product.discount %}
         <span class="badge bg-success">Discounted</span>

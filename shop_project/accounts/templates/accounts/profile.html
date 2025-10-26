@@ -1,12 +1,35 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container mt-4">
-  <h2>{{ user.username }}'s Profile</h2>
-  <p>Email: {{ user.email }}</p>
-  <p>Phone: {{ user.profile.phone }}</p>
-  <p>Address: {{ user.profile.address }}</p>
-  <p>Birth date: {{ user.profile.birth_date }}</p>
-  <a href="{% url 'accounts:profile_edit' %}" class="btn btn-warning">Edit Profile</a>
-  <a href="{% url 'accounts:logout' %}" class="btn btn-danger">Logout</a>
+<div class="container mt-5">
+  <div class="card shadow" style="background-color: #1e1e1f; border: 2px solid #bebec2;">
+    <div class="card-body">
+      <h2 class="card-title text-light mb-4">{{ user.username }}'s Profile</h2>
+
+      <ul class="list-group list-group-flush mb-4">
+        <li class="list-group-item" style="background-color: #2a2a2b; color: #bebec2;">
+          <strong>Email:</strong> {{ user.email }}
+        </li>
+        <li class="list-group-item" style="background-color: #2a2a2b; color: #bebec2;">
+          <strong>Phone:</strong> {{ user.profile.phone|default:"Not set" }}
+        </li>
+        <li class="list-group-item" style="background-color: #2a2a2b; color: #bebec2;">
+          <strong>Address:</strong> {{ user.profile.address|default:"Not set" }}
+        </li>
+        <li class="list-group-item" style="background-color: #2a2a2b; color: #bebec2;">
+          <strong>Birth date:</strong> {{ user.profile.birth_date|default:"Not set" }}
+        </li>
+      </ul>
+
+      <div class="d-flex gap-2">
+        <a href="{% url 'accounts:profile_edit' %}" class="btn" style="background-color: #bebec2; color: #1e1e1f; font-weight: bold;">
+          Edit Profile
+        </a>
+       <form action="{% url 'accounts:logout' %}" method="post" class="d-inline">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-danger">Logout</button>
+</form>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}

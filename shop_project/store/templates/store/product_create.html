@@ -1,20 +1,23 @@
 {% extends "store/base.html" %}
-{% block title %}Add product - My Shop{% endblock %}
+{% block title %}Add Product - My Shop{% endblock %}
 
 {% block content %}
-  <h2>Add product</h2>
-  <div class="card">
+<div class="container mt-4">
+  <h2 class="mb-4 text-center">➕ Add New Product</h2>
+
+  <div class="card shadow-lg mx-auto" style="max-width: 600px; background-color: #1e1e1f; border: 2px solid #bebec2;">
     <div class="card-body">
       <form method="post" enctype="multipart/form-data" novalidate>
         {% csrf_token %}
+
         {% for field in form %}
           <div class="mb-3">
-            <label class="form-label">{{ field.label }}</label>
+            <label class="form-label text-light">{{ field.label }}</label>
             <div>
               {{ field }}
             </div>
             {% if field.help_text %}
-              <div class="form-text">{{ field.help_text }}</div>
+              <div class="form-text text-muted">{{ field.help_text }}</div>
             {% endif %}
             {% for error in field.errors %}
               <div class="text-danger small">{{ error }}</div>
@@ -22,9 +25,63 @@
           </div>
         {% endfor %}
 
-        <button type="submit" class="btn btn-primary">Save</button>
-        <a href="{% url 'home' %}" class="btn btn-link">Cancel</a>
+        <div class="d-flex justify-content-between">
+          <button type="submit" class="btn btn-primary fw-bold" style="border-radius: 50px; padding: 8px 30px;">
+            Save
+          </button>
+          <a href="{% url 'home' %}" class="btn btn-outline-light fw-bold" style="border-radius: 50px; padding: 8px 30px;">
+            Cancel
+          </a>
+        </div>
       </form>
     </div>
   </div>
+</div>
+
+<style>
+  .form-control, .form-select, input[type="file"] {
+    background-color: #2a2a2b;
+    color: #bebec2;
+    border: 1px solid #bebec2;
+    border-radius: 8px;
+    padding: 8px 12px;
+  }
+
+  .form-control:focus, .form-select:focus, input[type="file"]:focus {
+    border-color: #bebec2;
+    box-shadow: 0 0 0 0.2rem rgba(190,190,194,0.25);
+    background-color: #2a2a2b;
+    color: #bebec2;
+  }
+
+  .form-label {
+    font-weight: 500;
+  }
+
+  .btn-primary {
+    background-color: #bebec2;
+    color: #1e1e1f;
+    border: 2px solid #bebec2;
+  }
+
+  .btn-primary:hover {
+    background-color: #1e1e1f;
+    color: #bebec2;
+    border: 2px solid #bebec2;
+  }
+
+  .btn-outline-light {
+    color: #bebec2;
+    border: 2px solid #bebec2;
+  }
+
+  .btn-outline-light:hover {
+    background-color: #bebec2;
+    color: #1e1e1f;
+  }
+
+  body {
+    background: linear-gradient(135deg, #bebec2, #1e1e1f);
+  }
+</style>
 {% endblock %}

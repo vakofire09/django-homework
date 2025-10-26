@@ -1,11 +1,35 @@
 {% extends "base.html" %}
+{% load widget_tweaks %}
 {% block content %}
-<div class="container mt-4">
-  <h2>Edit Profile</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Save</button>
-  </form>
+<div class="container mt-5">
+  <div class="card shadow" style="background-color: #1e1e1f; border: 2px solid #bebec2;">
+    <div class="card-body">
+      <h2 class="card-title text-light mb-4">Edit Profile</h2>
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          {% for field in form %}
+            <div class="mb-3">
+              <label for="{{ field.id_for_label }}" class="form-label text-light">{{ field.label }}</label>
+              {{ field|add_class:"form-control" }}
+              {% if field.errors %}
+                <div class="text-danger mt-1">
+                  {{ field.errors|striptags }}
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn" style="background-color: #bebec2; color: #1e1e1f; font-weight: bold;">
+            Save Changes
+          </button>
+          <a href="{% url 'accounts:profile' %}" class="btn btn-outline-light">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock %}

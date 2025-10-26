@@ -1,3 +1,4 @@
+{% load crispy_forms_tags %}
 <!doctype html>
 <html lang="en">
   <head>
@@ -6,67 +7,170 @@
     <title>{% block title %}My Shop{% endblock %}</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <style>
+      body {
+        background: linear-gradient(135deg, #bebec2, #1e1e1f);
+        min-height: 100vh;
+        color: #fff;
+      }
+
+      .navbar {
+        background: #1e1e1f;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      }
+
+      .navbar-brand, .nav-link, .btn-link {
+        color: #bebec2 !important;
+      }
+
+      .nav-link:hover {
+        color: #fff !important;
+      }
+
+      .cart-link {
+        position: relative;
+        display: inline-block;
+        color: #bebec2;
+        text-decoration: none;
+        margin-left: 1rem;
+      }
+
+      .cart-link .badge {
+        position: absolute;
+        top: -6px;
+        right: -10px;
+        font-size: 0.7rem;
+      }
+
+      main.container {
+        padding-top: 20px;
+        padding-bottom: 20px;
+      }
+
+      .card, .alert, .form-control, .btn {
+        border-radius: 0.5rem;
+      }
+
+      .card {
+        background: #bebec2;
+        color: #1e1e1f;
+      }
+
+      .btn-primary {
+        background-color: #1e1e1f;
+        border-color: #1e1e1f;
+        color: #bebec2;
+      }
+
+      .btn-primary:hover {
+        background-color: #333;
+        border-color: #333;
+      }
+
+      .btn-outline-light {
+        color: #bebec2;
+        border-color: #bebec2;
+      }
+
+      .btn-outline-light:hover {
+        color: #1e1e1f;
+        background-color: #bebec2;
+        border-color: #bebec2;
+      }
+
+      .form-control {
+        background-color: #fff;
+        color: #1e1e1f;
+      }
+
+      .alert {
+        color: #1e1e1f;
+        background-color: #bebec2;
+      }
+
+      a {
+        text-decoration: none;
+      }
+
+      #end {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        color: #bebec2;
+        font-size: 0.9em;
+      }
+
+    </style>
 
     {% block extra_head %}{% endblock %}
   </head>
   <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-  <div class="container">
-    <a class="navbar-brand" href="{% url 'home' %}">My Shop</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain" aria-controls="navMain" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    <nav class="navbar navbar-expand-lg mb-4">
+      <div class="container">
+        <a class="navbar-brand" href="{% url 'home' %}">My Shop</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain" aria-controls="navMain" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <div class="collapse navbar-collapse" id="navMain">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Categories</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'discounted_products' %}">Discounts</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'product_create' %}">Add Product</a></li>
+        <div class="collapse navbar-collapse" id="navMain">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link" href="{% url 'discounted_products' %}">Discounts</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'categories' %}">Categories</a></li>
+            {% if user.is_superuser %}
+              <li class="nav-item"><a class="nav-link" href="{% url 'product_create' %}">Add Product</a></li>
+            {% endif %}
+            {% if user.is_authenticated %}
+              <li class="nav-item"><a class="nav-link" href="{% url 'accounts:profile' %}">Profile</a></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'accounts:profile_edit' %}">Edit Profile</a></li>
+              <li class="nav-item">
+                <form action="{% url 'accounts:logout' %}" method="post" class="d-inline">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-link nav-link">Logout</button>
+                </form>
+              </li>
+            {% else %}
+              <li class="nav-item"><a class="nav-link" href="{% url 'accounts:login' %}">Login</a></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'accounts:register' %}">Register</a></li>
+            {% endif %}
+          </ul>
 
-        {% if user.is_authenticated %}
-          <li class="nav-item"><a class="nav-link" href="{% url 'accounts:profile' %}">Profile</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'accounts:profile_edit' %}">Edit Profile</a></li>
-          <li class="nav-item">
-            <form action="{%url 'accounts:logout' %}" method="post" class="d-inline">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-link nav-link">Logout</button>
+          <div class="d-flex align-items-center">
+            <form class="d-flex me-3" role="search" method="get" action="{% url 'product_search' %}">
+              <input class="form-control me-2" type="search" name="q" placeholder="Search products...">
+              <button class="btn btn-outline-light" type="submit">Search</button>
             </form>
-          </li>
-                  <li class="nav-item"><a class="nav-link" href="{% url 'cart_detail' %}">cart</a></li>
 
-        {% else %}
-          <li class="nav-item"><a class="nav-link" href="{% url 'accounts:login' %}">Login</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'accounts:register' %}">Register</a></li>
-        {% endif %}
-      </ul>
+            {% if user.is_authenticated %}
+              <a href="{% url 'cart_detail' %}" class="cart-link">
+                <i class="bi bi-cart" style="font-size: 1.6rem;"></i>
+                {% with user.cart_items.count as cart_count %}
+                  {% if cart_count > 0 %}
+                    <span class="badge bg-danger rounded-pill">{{ cart_count }}</span>
+                  {% endif %}
+                {% endwith %}
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </nav>
 
-      <form class="d-flex" role="search" method="get" action="{% url 'home' %}">
-        <input class="form-control me-2" type="search" name="q" placeholder="Search products...">
-        <button class="btn btn-outline-light" type="submit">Search</button>
-      </form>
-        </ul>
-    </div>
-  </div>
-</nav>
-
+    {% if messages %}
+      <div class="container mt-2">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
 
     <main class="container">
       {% block content %}{% endblock %}
     </main>
-
-        <h3>Latest Products</h3>
-<ul>
-  {% for product in latest_products %}
-    <li><a href="{% url 'product_detail' product.id %}">{{ product.name }}</a></li>
-  {% endfor %}
-</ul>
-
-{% if product.image %}
-  <img src="{{ product.image.url }}" class="img-fluid" alt="{{ product.name }}">
-{% else %}
-  <p>No image available.</p>
-{% endif %}
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     {% block extra_js %}{% endblock %}

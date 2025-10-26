@@ -2,10 +2,73 @@
 {% block title %}Update {{ product.name }}{% endblock %}
 
 {% block content %}
-<h1>Update {{ product.name }}</h1>
+<div class="container mt-5">
+  <h2 class="mb-4 text-center text-light">✏️ Update {{ product.name }}</h2>
+
+  <div class="card shadow-lg mx-auto" style="max-width: 600px; background-color: #1e1e1f; border: 2px solid #bebec2;">
+    <div class="card-body">
       <form method="post" enctype="multipart/form-data" novalidate>
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit" class="btn btn-success">Update</button>
-</form>
+        {% csrf_token %}
+
+        {% for field in form %}
+          <div class="mb-3">
+            <label class="form-label text-light">{{ field.label }}</label>
+            <div>
+              {{ field }}
+            </div>
+            {% if field.help_text %}
+              <div class="form-text text-muted">{{ field.help_text }}</div>
+            {% endif %}
+            {% for error in field.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+
+        <div class="text-center">
+          <button type="submit" class="btn btn-success fw-bold" style="border-radius: 50px; padding: 10px 40px;">
+            Update
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+  body {
+    background: linear-gradient(135deg, #bebec2, #1e1e1f);
+  }
+
+  .form-control, .form-select, input[type="file"] {
+    background-color: #2a2a2b;
+    color: #bebec2;
+    border: 1px solid #bebec2;
+    border-radius: 8px;
+    padding: 8px 12px;
+  }
+
+  .form-control:focus, .form-select:focus, input[type="file"]:focus {
+    border-color: #bebec2;
+    box-shadow: 0 0 0 0.2rem rgba(190,190,194,0.25);
+    background-color: #2a2a2b;
+    color: #bebec2;
+  }
+
+  .form-label {
+    font-weight: 500;
+  }
+
+  .btn-success {
+    background-color: #bebec2;
+    color: #1e1e1f;
+    border: 2px solid #bebec2;
+  }
+
+  .btn-success:hover {
+    background-color: #1e1e1f;
+    color: #bebec2;
+    border: 2px solid #bebec2;
+  }
+</style>
 {% endblock %}

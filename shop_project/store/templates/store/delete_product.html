@@ -2,11 +2,54 @@
 {% block title %}Delete {{ product.name }}{% endblock %}
 
 {% block content %}
-<h1>Delete {{ product.name }}?</h1>
-<p>Are you sure you want to delete this product?</p>
-<form method="post">
-  {% csrf_token %}
-  <button type="submit" class="btn btn-danger">Yes, Delete</button>
-  <a href="{% url 'product_detail' product.id %}" class="btn btn-secondary">Cancel</a>
-</form>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+  <div class="card text-center shadow-lg" style="max-width: 500px; background-color: #1e1e1f; border: 2px solid #bebec2;">
+    <div class="card-body">
+      <h2 class="card-title text-light mb-3">⚠️ Delete {{ product.name }}?</h2>
+      <p class="mb-4" id="are">Are you sure you want to permanently delete this product?</p>
+
+      <form method="post" class="d-flex justify-content-center gap-2">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger fw-bold" style="border-radius: 50px; padding: 10px 30px;">
+          Yes, Delete
+        </button>
+        <a href="{% url 'product_detail' product.id %}" class="btn btn-secondary fw-bold" style="border-radius: 50px; padding: 10px 30px;">
+          Cancel
+        </a>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+  #are {
+    color: #bebec2;
+  }
+  body {
+    background: linear-gradient(135deg, #bebec2, #1e1e1f);
+  }
+
+  .btn-danger {
+    background-color: #e74c3c;
+    color: #fff;
+    border: 2px solid #e74c3c;
+  }
+
+  .btn-danger:hover {
+    background-color: #c0392b;
+    border-color: #c0392b;
+  }
+
+  .btn-secondary {
+    background-color: #bebec2;
+    color: #1e1e1f;
+    border: 2px solid #bebec2;
+  }
+
+  .btn-secondary:hover {
+    background-color: #1e1e1f;
+    color: #bebec2;
+    border: 2px solid #bebec2;
+  }
+</style>
 {% endblock %}

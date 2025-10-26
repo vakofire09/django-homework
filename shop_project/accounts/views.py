@@ -14,7 +14,7 @@ class RegisterView(CreateView):
     model = User
     form_class = UserRegisterForm
     template_name = 'accounts/register.html'
-    success_url = reverse_lazy('login')
+    success_url = reverse_lazy('accounts:login')
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -45,7 +45,7 @@ class ProfileUpdateView(UpdateView):
     model = Profile
     form_class = ProfileForm
     template_name = 'accounts/profile_edit.html'
-    success_url = reverse_lazy('profile')
+    success_url = reverse_lazy('accounts:profile')
 
     def get_object(self, queryset=None):
         return self.request.user.profile

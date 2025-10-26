@@ -8,6 +8,8 @@ from django.db.models import Avg
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
     is_active = models.BooleanField(default=True) 
+    description = models.TextField(blank=True, null=True)
+    image = models.ImageField(upload_to='category_images/', null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -20,6 +22,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=8, decimal_places=2)
     discount = models.BooleanField(default=False)  
     in_stock = models.BooleanField(default=True) 
+    brand = models.CharField(max_length=100, blank=True, null=True)
     image = models.ImageField(upload_to='media/', null=True, blank=True)  
     rating = models.DecimalField(
     max_digits=3,

@@ -2,71 +2,235 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<h1>All Products</h1>
+<style>
+  #end {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: #bebec2;
+    font-size: 0.9em;
+  }
 
-<form method="get" class="row g-2 mb-4">
-  <div class="col-md-3">
-    <input type="text" name="q" class="form-control" placeholder="Search..." value="{{ request.GET.q }}">
-  </div>
-  <div class="col-md-2">
-    <input type="number" name="min_price" class="form-control" placeholder="Min price" value="{{ request.GET.min_price }}">
-  </div>
-  <div class="col-md-2">
-    <input type="number" name="max_price" class="form-control" placeholder="Max price" value="{{ request.GET.max_price }}">
-  </div>
-  <div class="col-md-2">
-    <button type="submit" class="btn btn-primary w-100">Filter</button>
-  </div>
-</form>
+  .filter-card {
+    background-color: #1e1e1f;
+    color: #bebec2;
+    border: 2px solid #bebec2;
+  }
+  .filter-card .form-label, 
+  .filter-card .form-check-label {
+    color: #bebec2;
+  }
+  .filter-card select, 
+  .filter-card input {
+    background-color: #2a2a2b;
+    color: #bebec2;
+    border: 1px solid #bebec2;
+  }
+  .filter-card button {
+    background-color: #bebec2;
+    color: #1e1e1f;
+    font-weight: bold;
+  }
+  .filter-card button:hover {
+    background-color: #1e1e1f;
+    color: #bebec2;
+    border: 1px solid #bebec2;
+  }
+
+  .product-card {
+    background-color: #1e1e1f;
+    color: #bebec2;
+    border: 2px solid #bebec2;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+  }
+  .product-card .card-title, 
+  .product-card .card-text, 
+  .product-card .text-warning {
+    color: #bebec2;
+  }
+  .product-card .btn-outline-primary {
+    color: #bebec2;
+    border-color: #bebec2;
+  }
+  .product-card .btn-outline-primary:hover {
+    background-color: #bebec2;
+    color: #1e1e1f;
+  }
+  .product-card .btn-outline-success {
+    color: #bebec2;
+    border-color: #bebec2;
+  }
+  .product-card .btn-outline-success:hover {
+    background-color: #bebec2;
+    color: #1e1e1f;
+  }
+
+
+  .star-filled { color: #f5c518; }
+  .star-empty { color: #555; }
+</style>
+
+<h1 class="mb-4 text-light">All Products</h1>
 
 <div class="row">
-  {% for product in products %}
-    <div class="col-md-3 mb-4 d-flex align-items-stretch">
-      <div class="card h-100">
-        {% if product.image %}
-          <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="object-fit: cover; height: 300px;">
-        {% else %}
-          <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-            No Image
-          </div>
-        {% endif %}
-        <div class="card-body d-flex flex-column">
-          <h5 class="card-title">{{ product.name }}</h5>
-          
-          <!-- Average Rating -->
-          <div class="mb-2">
-            {% with rating=product.rating|floatformat:0 %}
-              {% for i in "12345" %}
-                {% if i|stringformat:"i" <= rating %}
-                  <span class="text-warning">&#9733;</span>
-                {% else %}
-                  <span class="text-secondary">&#9733;</span>
-                {% endif %}
+  <!-- Sidebar Filters -->
+  <div class="col-md-3">
+    <div class="card filter-card mb-4">
+      <div class="card-header">Filters</div>
+      <div class="card-body">
+        <form method="get" action="{% url 'home' %}">
+          <!-- Category -->
+          <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <select name="category" id="category" class="form-select">
+              <option value="">All</option>
+              {% for cat in categories %}
+                <option value="{{ cat.id }}" {% if request.GET.category|default:'' == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
               {% endfor %}
-            {% endwith %}
-            ({{ product.rating|floatformat:1 }}/5)
+            </select>
           </div>
 
-          <p class="card-text mt-auto">${{ product.price }}</p>
-
-          <div class="d-flex justify-content-between mt-2">
-            <a href="{% url 'product_detail' product.pk %}" class="btn btn-outline-primary">
-              View
-            </a>
-            <form action="{% url 'add_to_cart' product.pk %}" method="post" class="m-0">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-outline-success">
-                <i class="bi bi-cart-plus"></i> Add to cart
-              </button>
-            </form>
+          <!-- Name -->
+          <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" name="name" id="name" class="form-control" value="{{ request.GET.name }}">
           </div>
-        </div>
+
+          <!-- Brand -->
+          <div class="mb-3">
+            <label for="brand" class="form-label">Brand</label>
+            <input type="text" name="brand" id="brand" class="form-control" value="{{ request.GET.brand }}">
+          </div>
+
+          <!-- Price Range -->
+          <div class="mb-3">
+            <label class="form-label">Price</label>
+            <div class="d-flex gap-2">
+              <input type="number" step="0.01" name="min_price" class="form-control" placeholder="Min" value="{{ request.GET.min_price }}">
+              <input type="number" step="0.01" name="max_price" class="form-control" placeholder="Max" value="{{ request.GET.max_price }}">
+            </div>
+          </div>
+
+          <!-- Discounted -->
+          <div class="mb-3 form-check">
+            <input type="checkbox" name="discounted" value="1" class="form-check-input" id="discounted" {% if request.GET.discounted %}checked{% endif %}>
+            <label class="form-check-label" for="discounted">Discounted Only</label>
+          </div>
+
+          <!-- Minimum Rating -->
+          <div class="mb-3">
+            <label for="rating" class="form-label">Minimum Rating</label>
+            <select name="rating" id="rating" class="form-select">
+              <option value="">Any</option>
+              {% for i in "12345" %}
+                <option value="{{ i }}" {% if request.GET.rating == i %}selected{% endif %}>{{ i }} Stars & Up</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <button type="submit" class="btn w-100">Apply Filters</button>
+        </form>
       </div>
     </div>
-  {% empty %}
-    <p>No products found.</p>
-  {% endfor %}
+  </div>
+
+  <!-- Products Grid -->
+  <div class="col-md-9">
+    <div class="row">
+      {% for product in products %}
+        <div class="col-md-4 mb-4 d-flex align-items-stretch">
+          <div class="card product-card h-100">
+            {% if product.image %}
+              <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="object-fit: cover; height: 300px;">
+            {% else %}
+              <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 300px;">
+                No Image
+              </div>
+            {% endif %}
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">{{ product.name }}</h5>
+
+              <div class="mb-2">
+                {% with rating=product.rating|floatformat:0 %}
+                  {% for i in "12345" %}
+                    {% if i|stringformat:"i" <= rating %}
+                      <span class="star-filled">&#9733;</span>
+                    {% else %}
+                      <span class="star-empty">&#9733;</span>
+                    {% endif %}
+                  {% endfor %}
+                {% endwith %}
+                ({{ product.rating|floatformat:1 }}/5)
+              </div>
+
+              <p class="card-text mt-auto">${{ product.price }}</p>
+
+              <div class="d-flex justify-content-between mt-2">
+                <a href="{% url 'product_detail' product.pk %}" class="btn btn-outline-primary">View</a>
+                <form action="{% url 'add_to_cart' product.pk %}" method="post" class="m-0">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-outline-success">
+                    <i class="bi bi-cart-plus"></i> Add to cart
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-light">No products found.</p>
+      {% endfor %}
+    </div>
+
+<div class="col-12 mt-4 d-flex justify-content-center" id="paginator">
+  {% if is_paginated %}
+  <nav aria-label="Page navigation">
+    <ul class="pagination">
+      {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a class="page-link text-light" style="background-color:#1e1e1f; border-color:#bebec2;" href="?page={{ page_obj.previous_page_number }}&{{ get_params.urlencode }}">Previous</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled">
+          <span class="page-link text-dark" style="background-color:#bebec2;">Previous</span>
+        </li>
+      {% endif %}
+
+      {% for num in page_obj.paginator.page_range %}
+        {% if num == page_obj.number %}
+          <li class="page-item active">
+            <span class="page-link" style="background-color:#1e1e1f; color:#bebec2; border-color:#bebec2;">{{ num }}</span>
+          </li>
+        {% else %}
+          <li class="page-item">
+            <a class="page-link text-dark" style="background-color:#bebec2; border-color:#1e1e1f;" href="?page={{ num }}&{{ get_params.urlencode }}">{{ num }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+        <li class="page-item">
+          <a class="page-link text-light" style="background-color:#1e1e1f; border-color:#bebec2;" href="?page={{ page_obj.next_page_number }}&{{ get_params.urlencode }}">Next</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled">
+          <span class="page-link text-dark" style="background-color:#bebec2;">Next</span>
+        </li>
+      {% endif %}
+    </ul>
+  </nav>
+</div>
+    </ul>
+  </nav>
+</div>
+{% endif %}
+  </div>
 </div>
 
+<span id="end">@made by valerian samsonidze</span>
 
 {% endblock %}
